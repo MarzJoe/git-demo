@@ -102,10 +102,11 @@ export default {
   display: flex;
   flex-direction: row;
   width: 100%;
+  height: 100%;
 }
 #top {
   width: 100%;
-  height: 60px;
+  height: 8%;
   background-color: #515a6e;
   display: flex;
   flex-direction: row;

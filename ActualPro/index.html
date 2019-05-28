@@ -9,7 +9,8 @@
     </style>
     <meta charset="utf-8">
     <link rel="stylesheet" href="http://at.alicdn.com/t/font_1177680_60q0r66qv9t.css">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!-- <meta name="viewport" content="width=device-width,initial-scale=1.0"> -->
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
     <title>actualpro</title>
 
   </head>
@@ -19,4 +20,19 @@
     </div>
     <!-- built files will be auto injected -->
   </body>
+  <script>
+    var zoom = function (e) {
+      var e = e || window.event;
+      if (e.wheelDelta && event.ctrlKey) {
+        event.returnValue = false
+      } else if (e.detail) {
+        event.returnValue = false;
+      }
+    }
+    if (document.addEventListener) {
+      document.addEventListener('DOMMouseScroll', zoom, false);
+    }
+    window.onmousewheel = document.onmousewheel = zoom;
+  
+  </script>
 </html>

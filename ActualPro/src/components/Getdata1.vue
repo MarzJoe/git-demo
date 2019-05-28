@@ -60,20 +60,20 @@
       <div class="top-3">
         <div>
           <i-button type="primary" style="width:80px;margin-left:20px;">查询</i-button>
-          <i-button type="success" style="width:80px;margin-left:20px;">添加</i-button>
+          <i-button type="success" style="width:80px;margin-left:20px;" @click="modal1 = true">添加</i-button>
           <i-button type="warning" style="width:80px;margin-left:20px;">上架</i-button>
           <i-button type="warning" style="width:80px;margin-left:20px;">下架</i-button>
         </div>
         <div>
           <template>
-            <Page :total="100" show-elevator/>
+            <Page :total="dataCount" show-total @on-change="changepage" show-elevator/>
           </template>
         </div>
       </div>
     </div>
     <div class="bot">
-      <template>
-        <Table :columns="columns8" :data="data7" size="small" ref="table"></Table>
+      <!-- <template>
+        <Table :columns="columns8" :data="giftXueKeList" size="small" ref="table"></Table>
         <br>
         <Button type="primary" size="large" @click="exportData(1)">
           <Icon type="ios-download-outline"></Icon>Export source data
@@ -84,7 +84,42 @@
         <Button type="primary" size="large" @click="exportData(3)">
           <Icon type="ios-download-outline"></Icon>Export custom data
         </Button>
-      </template>
+      </template>-->
+      <Table border :columns="columns8" :data="showList">
+        <template slot-scope="{ row }" slot="name">
+          <strong>{{ row.name }}</strong>
+        </template>
+        <template slot-scope="{ row, index }" slot="action">
+          <Button type="primary" size="small" style="margin-right: 5px" @click="show(index)">修改</Button>
+          <Button type="error" size="small" @click="remove(index)">删除</Button>
+        </template>
+      </Table>
+           <Modal
+        v-model="modal1"
+        title="添加商品"
+        @on-ok="ok"
+        @on-cancel="cancel">
+         <Form :model="formLeft" label-position="left" :label-width="100">
+        <FormItem label="名称">
+            <Input v-model="formLeft.fName"/>
+        </FormItem>
+        <FormItem label="价格">
+            <Input v-model="formLeft.fPrice"/>
+        </FormItem>
+        <FormItem label="描述">
+            <Input type="textarea" v-model="formLeft.fDescription"/>
+        </FormItem>
+        <FormItem label="类别">
+            <Input v-model="formLeft.fClass"/>
+        </FormItem>
+        <FormItem label="库存">
+            <Input v-model="formLeft.fSumNum"/>
+        </FormItem>
+        <FormItem label="原价">
+            <Input v-model="formLeft.fOldPrice"/>
+        </FormItem>
+    </Form>
+    </Modal>
     </div>
   </div>
 </template>
@@ -94,73 +129,144 @@ export default {
   name: "Getdata1",
   data() {
     return {
+      formLeft: {
+        fName: "",
+        fPrice: "",
+        fDescription: "",
+        fClass: "",
+        fSumNum: "",
+        fOldPrice: "",
+      },
+      showList:[],
+      dataCount:0,
+      pageSize:10,
+      model3:"",
       columns8: [
         {
-          title: "Name",
-          key: "name",
-          fixed: "left",
-          width: 200
+          title: "Id",
+          type: "index",
+          sortable: true
         },
         {
-          title: "Show",
-          key: "show",
-          width: 150,
-          sortable: true,
+          title: "名称",
+          key: "fName"
+        },
+        {
+          title: "图片",
+          key: "imgsrc",
+          render: (h, params) => {
+            return h("div", [
+              h("img", {
+                attrs: {
+                  src: params.row.imgsrc
+                },
+                style: {
+                  width: "40px",
+                  height: "40px"
+                }
+              })
+            ]);
+          }
+        },
+        {
+          title: "描述",
+          key: "fDescription"
+        },
+        {
+          title: "库存",
+          key: "fSumNum",
           filters: [
             {
-              label: "Greater than 4000",
+              label: "大于20",
               value: 1
             },
             {
-              label: "Less than 4000",
-              value: 2
+              label: "大于20",
+              value: 1
             }
           ],
           filterMultiple: false,
           filterMethod(value, row) {
             if (value === 1) {
-              return row.show > 4000;
+              return row.fSumNum > 20;
             } else if (value === 2) {
-              return row.show < 4000;
+              return row.fSumNum < 20;
             }
           }
         },
         {
-          title: "Weak",
-          key: "weak",
+          title: "Action",
+          slot: "action",
           width: 150,
-          sortable: true
-        },
-        {
-          title: "Signin",
-          key: "signin",
-          width: 150,
-          sortable: true
-        },
-        {
-          title: "Click",
-          key: "click",
-          width: 150,
-          sortable: true
-        },
-        {
-          title: "Active",
-          key: "active",
-          width: 150,
-          sortable: true
-        },
-        {
-          title: "7, retained",
-          key: "day7",
-          width: 150,
-          sortable: true
-        },
-        {
-          title: "30, retained",
-          key: "day30",
-          width: 150,
-          sortable: true
+          align: "center"
         }
+        // {
+        //   title: "ID",
+        //   type: "index",
+        //   sortable: true,
+        //   fixed: "left",
+        //   width: 200
+        // },
+        // {
+        //   title: "Show",
+        //   key: "show",
+        //   width: 150,
+        //   sortable: true,
+        //   filters: [
+        //     {
+        //       label: "Greater than 4000",
+        //       value: 1
+        //     },
+        //     {
+        //       label: "Less than 4000",
+        //       value: 2
+        //     }
+        //   ],
+        //   filterMultiple: false,
+        //   filterMethod(value, row) {
+        //     if (value === 1) {
+        //       return row.show > 4000;
+        //     } else if (value === 2) {
+        //       return row.show < 4000;
+        //     }
+        //   }
+        // },
+        // {
+        //   title: "Weak",
+        //   key: "weak",
+        //   width: 150,
+        //   sortable: true
+        // },
+        // {
+        //   title: "Signin",
+        //   key: "signin",
+        //   width: 150,
+        //   sortable: true
+        // },
+        // {
+        //   title: "Click",
+        //   key: "click",
+        //   width: 150,
+        //   sortable: true
+        // },
+        // {
+        //   title: "Active",
+        //   key: "active",
+        //   width: 150,
+        //   sortable: true
+        // },
+        // {
+        //   title: "7, retained",
+        //   key: "day7",
+        //   width: 150,
+        //   sortable: true
+        // },
+        // {
+        //   title: "30, retained",
+        //   key: "day30",
+        //   width: 150,
+        //   sortable: true
+        // }
       ],
       data7: [
         {
@@ -314,6 +420,7 @@ export default {
           month: 5811
         }
       ],
+      giftXueKeList: [],
       options2: {
         shortcuts: [
           {
@@ -383,7 +490,59 @@ export default {
     };
   },
   computed: {},
-  methods: {}
+  methods: {
+    getdata: function() {
+      var that = this;
+      this.$http
+        .post(
+          // // "https://www.myyd.xyz/baas/takeoutAdmin/cuisine/queryTakeout_food"
+          "http://marsjoe.work/Baas/xiaodian/mypay/queryTakeout_food",
+          // "http://localhost:8080/baas/xiaodian/mypay/queryTakeout_food",
+          {
+            emulateJSON: true
+          }
+        )
+        .then(function(res) {
+          var items = new Array();
+          for (let i = 0; i < res.data.rows.length; i++) {
+            var object = new Object();
+            object.fID = res.data.rows[i].fID.value;
+            object.fName = res.data.rows[i].fName.value;
+            object.fPrice = res.data.rows[i].fPrice.value;
+            object.fDescription = res.data.rows[i].fDescription.value;
+            object.fSumNum = res.data.rows[i].fSumNum.value;
+            object.imgsrc =
+              "https://wxwaimai.oss-cn-huhehaote.aliyuncs.com/kyq/" +
+              res.data.rows[i].ownerID.value +
+              "/" +
+              res.data.rows[i].storeFileName.value;
+            items[i] = object;
+          }
+          that.giftXueKeList = items;
+          that.dataCount=that.giftXueKeList.length;
+          //总条数
+          if(that.dataCount<that.pageSize){
+            that.showList=that.giftXueKeList;
+          }
+          else{
+            that.showList=that.giftXueKeList.slice(0,that.pageSize);
+          }
+        })
+        .catch(function() {
+          alert("error");
+          console.log("服务器异常");
+        });
+    },
+    changepage(index){
+      var that = this;
+      var _start = (index - 1) * that.pageSize;
+      var _end = index * this.pageSize;
+      this.showList = this.giftXueKeList.slice(_start,_end);
+    }
+  },
+  created() {
+    this.getdata();
+  }
   // getdata:function(){
   //   this.$ajax.get(
   //     'https://www.myyd.xyz/baas/takeoutAdmin/cuisine/queryTakeout_food'
@@ -426,7 +585,7 @@ export default {
 }
 .top {
   width: 100%;
-  height: 150px;
+  height: 20%;
 }
 .top-1 {
   width: 100%;
@@ -466,7 +625,7 @@ export default {
 }
 .bot {
   width: 100%;
-  height: 520px;
+  height: 50%;
 }
 h1,
 h2 {

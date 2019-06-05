@@ -1,96 +1,117 @@
 <template>
-  <div class="hello">
-    <Form ref="formInline" :model="formInline" :rules="ruleInline" inline>
-      <FormItem prop="fName">
-        <Input type="text" v-model="formInline.fName" placeholder="名称"/>>
-      </FormItem>
-      <FormItem prop="fImg">
-        <Input type="text" v-model="formInline.fImg" placeholder="图片"/>>
-      </FormItem>
-      <FormItem prop="fPrice">
-        <Input type="text" v-model="formInline.fPrice" placeholder="价格"/>>
-      </FormItem>
-      <FormItem>
-        <Button type="success" ghost @click="post()">点击插入数据</Button>
-      </FormItem>
-    </Form>
+  <div class="table">
+    <!-- <p>Custom row styles:</p>
+  <Table :row-class-name="rowClassName" :columns="columns1" :data="data1"></Table>
+  <p>Custom column styles:</p>
+  <Table :columns="columns9" :data="data1"></Table>
+  <p>Custom arbitrary cell styles:</p>
+  <Table :columns="columns1" :data="data8"></Table> -->
   </div>
 </template>
-
 <script>
 export default {
-  name: "InsertData",
   data() {
     return {
-      formInline: {
-        fName: "",
-        fImg: "",
-        fPrice:""
-      },
-      ruleInline: {
-        fName: [
-          {
-            required: true,
-            message: "Please fill in the name",
-            trigger: "blur"
+      columns1: [
+        {
+          title: "Name",
+          key: "name"
+        },
+        {
+          title: "Age",
+          key: "age"
+        },
+        {
+          title: "Address",
+          key: "address"
+        }
+      ],
+      columns9: [
+        {
+          title: "Name",
+          key: "name"
+        },
+        {
+          title: "Age",
+          key: "age",
+          className: "demo-table-info-column"
+        },
+        {
+          title: "Address",
+          key: "address"
+        }
+      ],
+      data1: [
+        {
+          name: "John Brown",
+          age: 18,
+          address: "New York No. 1 Lake Park",
+          date: "2016-10-03"
+        },
+        {
+          name: "Jim Green",
+          age: 24,
+          address: "London No. 1 Lake Park",
+          date: "2016-10-01"
+        },
+        {
+          name: "Joe Black",
+          age: 30,
+          address: "Sydney No. 1 Lake Park",
+          date: "2016-10-02"
+        },
+        {
+          name: "Jon Snow",
+          age: 26,
+          address: "Ottawa No. 2 Lake Park",
+          date: "2016-10-04"
+        }
+      ],
+      data8: [
+        {
+          name: "John Brown",
+          age: 18,
+          address: "New York No. 1 Lake Park"
+        },
+        {
+          name: "Jim Green",
+          age: 25,
+          address: "London No. 1 Lake Park",
+          cellClassName: {
+            age: "demo-table-info-cell-age",
+            address: "demo-table-info-cell-address"
           }
-        ],
-        fImg: [
-          {
-            required: true,
-            message: "Please fill in the img.",
-            trigger: "blur"
+        },
+        {
+          name: "Joe Black",
+          age: 30,
+          address: "Sydney No. 1 Lake Park"
+        },
+        {
+          name: "Jon Snow",
+          age: 26,
+          address: "Ottawa No. 2 Lake Park",
+          cellClassName: {
+            name: "demo-table-info-cell-name"
           }
-        ],
-        fPrice: [
-          {
-            required: true,
-            message: "Please fill in the fPrice.",
-            trigger: "blur"
-          }
-        ]
-      },
-      msg: "Welcome to Your Vue.js App"
+        }
+      ]
     };
   },
   methods: {
-    post: function() {
-      this.$ajax
-        .post(
-          "http://localhost:8080/baas/Vuedb/vuedb/insertUser",
-          JSON.stringify({ fTel: "4556", fMoney: 300 }),
-          {
-            emulateJSON: true
-          }
-        )
-        .then(
-          function(res) {
-            document.write(res.state);
-          },
-          function(res) {
-            console.log(res.state);
-          }
-        );
+    rowClassName(row, index) {
+
+        return "demo-table-info-row";
+    
     }
   }
 };
 </script>
+<style>
+.table{
+  height: 100%;
+  width: 100%;
+  background-color: red;
+}
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h1,
-h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
 </style>

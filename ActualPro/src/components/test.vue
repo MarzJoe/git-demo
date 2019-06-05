@@ -1,130 +1,154 @@
 <template>
-  <div class="hello">
-    <div class="top">
-      <div class="top-1">
-        <div class="row-1">
-          <template>
-            <div>
-              商品编码：
-              <Input suffix="ios-search" style="width: auto"/>
-            </div>
-          </template>
+  <div class="shop">
+    <div class="right">
+      <div class="top">
+        <div class="top-1">
+          <div class="row-1">
+            <template>
+              <div>
+                商品编码：
+                <Input suffix="ios-search" style="width: auto"/>
+              </div>
+            </template>
+          </div>
+          <div class="row-1">
+            <template>
+              状态：
+              <Select v-model="model3" style="width:100px">
+                <Option v-for="item in cityList" :value="item.value" :key="item.value"></Option>
+              </Select>
+            </template>
+          </div>
+          <div class="row-1">
+            <template>
+              价格区间：
+              <Select v-model="model3" style="width:100px">
+                <Option
+                  v-for="itemPrice in cityListPrice"
+                  :value="itemPrice.value"
+                  :key="itemPrice.value"
+                ></Option>
+              </Select>
+            </template>
+          </div>
         </div>
-        <div class="row-1">
-          <template>
-            状态：
-            <Select v-model="model3" style="width:100px">
-              <Option v-for="item in cityList" :value="item.value" :key="item.value"></Option>
-            </Select>
-          </template>
+        <div class="top-2">
+          <div class="row-1">
+            <template>
+              <div>
+                商品名称：
+                <Input suffix="ios-search" style="width: auto"/>
+              </div>
+            </template>
+          </div>
+          <div class="row-1">
+            上架日期：
+            <template>
+              <Row>
+                <Col span="12">
+                  <DatePicker
+                    type="daterange"
+                    :options="options2"
+                    placement="bottom-end"
+                    placeholder="Select date"
+                    style="width: 200px"
+                  ></DatePicker>
+                </Col>
+              </Row>
+            </template>
+          </div>
         </div>
-        <div class="row-1">
-          <template>
-            价格区间：
-            <Select v-model="model3" style="width:100px">
-              <Option
-                v-for="itemPrice in cityListPrice"
-                :value="itemPrice.value"
-                :key="itemPrice.value"
-              ></Option>
-            </Select>
-          </template>
+        <div class="top-3">
+          <div>
+            <i-button type="primary" style="width:80px;margin-left:20px;">查询</i-button>
+            <i-button type="success" style="width:80px;margin-left:20px;" @click="modal1 = true">添加</i-button>
+            <i-button type="warning" style="width:80px;margin-left:20px;">上架</i-button>
+            <i-button type="warning" style="width:80px;margin-left:20px;">下架</i-button>
+          </div>
+          <div>
+            <template>
+              <Page
+                :total="dataCount"
+                :page-size="pageSize"
+                show-total
+                @on-change="changepage"
+                show-elevator
+              />
+            </template>
+          </div>
         </div>
       </div>
-      <div class="top-2">
-        <div class="row-1">
-          <template>
-            <div>
-              商品名称：
-              <Input suffix="ios-search" style="width: auto"/>
-            </div>
+      <div id="bot">
+        <Table
+          border
+          :columns="columns8"
+          :data="showList"
+          :row-class-name="rowClassName"
+          class="default"
+        >
+          <template slot-scope="{ row }" slot="name">
+            <strong>{{ row.name }}</strong>
           </template>
-        </div>
-        <div class="row-1">
-          上架日期：
-          <template>
-            <Row>
-              <Col span="12">
-                <DatePicker
-                  type="daterange"
-                  :options="options2"
-                  placement="bottom-end"
-                  placeholder="Select date"
-                  style="width: 200px"
-                ></DatePicker>
-              </Col>
-            </Row>
+          <template slot-scope="{ row, index }" slot="action">
+            <Button type="primary" size="small" style="margin-right: 5px" @click="modal2 = true">修改</Button>
+            <Button type="error" size="small" @click="remove(index)">删除</Button>
           </template>
-        </div>
+        </Table>
+        <Modal v-model="modal1" title="添加商品" @on-ok="ok" @on-cancel="cancel">
+          <Form :model="formLeft" label-position="left" :label-width="100">
+            <FormItem label="名称">
+              <Input v-model="formLeft.fName"/>
+            </FormItem>
+            <FormItem label="价格">
+              <Input v-model="formLeft.fPrice"/>
+            </FormItem>
+            <FormItem label="描述">
+              <Input type="textarea" v-model="formLeft.fDescription"/>
+            </FormItem>
+            <FormItem label="类别">
+              <Input v-model="formLeft.fClass"/>
+            </FormItem>
+            <FormItem label="库存">
+              <Input v-model="formLeft.fSumNum"/>
+            </FormItem>
+            <FormItem label="原价">
+              <Input v-model="formLeft.fOldPrice"/>
+            </FormItem>
+          </Form>
+        </Modal>
+        <Modal v-model="modal2" title="编辑商品" @on-ok="okChange" @on-cancel="cancelChange">
+          <Form :model="formLeftChange" label-position="left" :label-width="100">
+            <FormItem label="名称">
+              <Input v-model="formLeftChange.fName"/>
+            </FormItem>
+            <FormItem label="价格">
+              <Input v-model="formLeftChange.fPrice"/>
+            </FormItem>
+            <FormItem label="描述">
+              <Input type="textarea" v-model="formLeftChange.fDescription"/>
+            </FormItem>
+            <FormItem label="类别">
+              <Input v-model="formLeftChange.fClass"/>
+            </FormItem>
+            <FormItem label="库存">
+              <Input v-model="formLeftChange.fSumNum"/>
+            </FormItem>
+            <FormItem label="原价">
+              <Input v-model="formLeftChange.fOldPrice"/>
+            </FormItem>
+          </Form>
+        </Modal>
       </div>
-      <div class="top-3">
-        <div>
-          <i-button type="primary" style="width:80px;margin-left:20px;">查询</i-button>
-          <i-button type="success" style="width:80px;margin-left:20px;" @click="modal1 = true">添加</i-button>
-          <i-button type="warning" style="width:80px;margin-left:20px;">上架</i-button>
-          <i-button type="warning" style="width:80px;margin-left:20px;">下架</i-button>
-        </div>
-        <div>
-          <template>
-            <Page :total="dataCount" show-total @on-change="changepage" show-elevator/>
-          </template>
-        </div>
-      </div>
-    </div>
-    <div class="bot">
-      <!-- <template>
-        <Table :columns="columns8" :data="giftXueKeList" size="small" ref="table"></Table>
-        <br>
-        <Button type="primary" size="large" @click="exportData(1)">
-          <Icon type="ios-download-outline"></Icon>Export source data
-        </Button>
-        <Button type="primary" size="large" @click="exportData(2)">
-          <Icon type="ios-download-outline"></Icon>Export sorting and filtered data
-        </Button>
-        <Button type="primary" size="large" @click="exportData(3)">
-          <Icon type="ios-download-outline"></Icon>Export custom data
-        </Button>
-      </template>-->
-      <Table border :columns="columns8" :data="showList">
-        <template slot-scope="{ row }" slot="name">
-          <strong>{{ row.name }}</strong>
-        </template>
-        <template slot-scope="{ row, index }" slot="action">
-          <Button type="primary" size="small" style="margin-right: 5px" @click="show(index)">修改</Button>
-          <Button type="error" size="small" @click="remove(index)">删除</Button>
-        </template>
-      </Table>
-      <Modal v-model="modal1" title="添加商品" @on-ok="ok" @on-cancel="cancel">
-        <Form :model="formLeft" label-position="left" :label-width="100">
-          <FormItem label="名称">
-            <Input v-model="formLeft.fName"/>
-          </FormItem>
-          <FormItem label="价格">
-            <Input v-model="formLeft.fPrice"/>
-          </FormItem>
-          <FormItem label="描述">
-            <Input type="textarea" v-model="formLeft.fDescription"/>
-          </FormItem>
-          <FormItem label="类别">
-            <Input v-model="formLeft.fClass"/>
-          </FormItem>
-          <FormItem label="库存">
-            <Input v-model="formLeft.fSumNum"/>
-          </FormItem>
-          <FormItem label="原价">
-            <Input v-model="formLeft.fOldPrice"/>
-          </FormItem>
-        </Form>
-      </Modal>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "Getdata1",
+  name: "test",
   data() {
     return {
+      height:"",
       formLeft: {
         fName: "",
         fPrice: "",
@@ -133,16 +157,25 @@ export default {
         fSumNum: "",
         fOldPrice: ""
       },
+      formLeftChange: {
+        fName: "",
+        fPrice: "",
+        fDescription: "",
+        fClass: "",
+        fSumNum: "",
+        fOldPrice: ""
+      },
       modal1: false,
+      modal2: false,
       showList: [],
       dataCount: 0,
-      pageSize: 9,
+      pageSize: 15,
       model3: "",
       columns8: [
         {
           title: "Id",
           type: "index",
-          sortable: true
+          sortable: true,
         },
         {
           title: "名称",
@@ -197,73 +230,6 @@ export default {
           width: 150,
           align: "center"
         }
-        // {
-        //   title: "ID",
-        //   type: "index",
-        //   sortable: true,
-        //   fixed: "left",
-        //   width: 200
-        // },
-        // {
-        //   title: "Show",
-        //   key: "show",
-        //   width: 150,
-        //   sortable: true,
-        //   filters: [
-        //     {
-        //       label: "Greater than 4000",
-        //       value: 1
-        //     },
-        //     {
-        //       label: "Less than 4000",
-        //       value: 2
-        //     }
-        //   ],
-        //   filterMultiple: false,
-        //   filterMethod(value, row) {
-        //     if (value === 1) {
-        //       return row.show > 4000;
-        //     } else if (value === 2) {
-        //       return row.show < 4000;
-        //     }
-        //   }
-        // },
-        // {
-        //   title: "Weak",
-        //   key: "weak",
-        //   width: 150,
-        //   sortable: true
-        // },
-        // {
-        //   title: "Signin",
-        //   key: "signin",
-        //   width: 150,
-        //   sortable: true
-        // },
-        // {
-        //   title: "Click",
-        //   key: "click",
-        //   width: 150,
-        //   sortable: true
-        // },
-        // {
-        //   title: "Active",
-        //   key: "active",
-        //   width: 150,
-        //   sortable: true
-        // },
-        // {
-        //   title: "7, retained",
-        //   key: "day7",
-        //   width: 150,
-        //   sortable: true
-        // },
-        // {
-        //   title: "30, retained",
-        //   key: "day30",
-        //   width: 150,
-        //   sortable: true
-        // }
       ],
       data7: [
         {
@@ -486,8 +452,39 @@ export default {
       ]
     };
   },
-  computed: {},
+  computed: {
+      height:function(){
+      var h = window.innerHeight * 0.75
+      alert(h)
+    },
+  },
   methods: {
+
+   rowClassName :function (row, index) {
+          return 'demo-table-info-row';
+      },
+    change: function() {
+      this.$http
+        .get(
+          "https://marsjoe.work/Baas/mypay/api/updateTest",
+          JSON.stringify({
+            fID: this.giftXueKeList[index].fID,
+            fName: this.formLeft.fName,
+            fPrice: this.formLeft.fPrice,
+            fDescription: this.formLeft.fDescription,
+            fClass: this.formLeft.fClass,
+            fSumNum: this.formLeft.fSumNum,
+            fOldPrice: this.formLeft.fOldPrice
+          })
+        )
+        .then(function(response) {
+          console.log(response);
+          this.getdata();
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
     InsertData: function() {
       // var qs = require("qs");
       // this.$ajax.post(
@@ -495,7 +492,7 @@ export default {
       //   qs.stringify({ fName: "小店" }, { indices: false })
       // );
       this.$http
-        .get("http://localhost:8080/baas/mypay/api/insertTest", {
+        .get("https://marsjoe.work/Baas/mypay/api/insertTest", {
           params: {
             fName: this.formLeft.fName,
             fPrice: this.formLeft.fPrice,
@@ -507,6 +504,7 @@ export default {
         })
         .then(function(response) {
           console.log(response);
+          this.getdata();
         })
         .catch(function(error) {
           console.log(error);
@@ -514,10 +512,57 @@ export default {
     },
     ok() {
       this.InsertData();
-      this.$Message.info("提交成功");
+      this.$Message.info("添加成功");
     },
     cancel() {
       this.$Message.info("取消操作");
+    },
+    okChange() {
+      this.change();
+      this.$Message.info("添加成功");
+    },
+    cancelChange() {
+      this.$Message.info("取消操作");
+    },
+    remove: function(index) {
+      this.$http
+        .post(
+          "https://marsjoe.work/Baas/mypay/api/deleteTest",
+          // 'http://localhost:8080/baas/takeoutAdmin/api/delete_Takeout_class',
+          JSON.stringify({
+            fID: this.giftXueKeList[index].fID
+          }),
+          { emulateJSON: true }
+        )
+        .then(
+          function(res) {
+            if (res.data.state === "1") {
+              this.$Message.success("记录删除成功!");
+            } else {
+              this.$Message.success("本目录下还有商品在售，暂不能删除!");
+            }
+            this.getdata();
+          },
+          function(res) {
+            console.log(res.state);
+          }
+        );
+      this.editIndex = -1;
+      // const fID = this.giftXueKeList[index].fID
+      // alert(this.giftXueKeList[index].fID)
+      //  this.$http
+      //   .post("http://localhost:8080/baas/mypay/api/deleteTest",
+      //   {
+      //     params: {
+      //       fID: fID
+      //     }
+      //   })
+      //   .then(function(response) {
+      //     console.log(response);
+      //   })
+      //   .catch(function(error) {
+      //     console.log(error);
+      //   });
     },
     getdata: function() {
       var that = this;
@@ -569,6 +614,7 @@ export default {
   },
   created() {
     this.getdata();
+    this.height();
   }
   // getdata:function(){
   //   this.$ajax.get(
@@ -601,18 +647,42 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-.hello {
+<style>
+.ivu-table .demo-table-info-row td {
+  /* background-color: #2db7f5; */
+  /* color: #fff; */
+  height: 60px;
+}
+.default {
+  width: 100%;
+}
+.color {
+  width: 100%;
+  padding: 0;
+}
+.z {
+  width: 100%;
+  margin: 0;
+  color: white;
+}
+.shop {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.right {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 10px 10px;
 }
 .top {
   width: 100%;
-  height: 150px;
+  height: 25%;
 }
 .top-1 {
   width: 100%;
@@ -621,6 +691,7 @@ export default {
   flex-direction: row;
   align-items: center;
   border: 1px solid #666;
+  box-sizing: border-box;
 }
 .top-2 {
   width: 100%;
@@ -630,6 +701,7 @@ export default {
   align-items: center;
   border-right: 1px solid #666;
   border-left: 1px solid #666;
+  box-sizing: border-box;
 }
 .row-1 {
   width: 25%;
@@ -639,6 +711,7 @@ export default {
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  box-sizing: border-box;
 }
 .top-3 {
   width: 100%;
@@ -649,10 +722,12 @@ export default {
   justify-content: space-between;
   padding-left: 25px;
   border: 1px solid #666;
+  box-sizing: border-box;
 }
-.bot {
+#bot {
   width: 100%;
-  height: 50%;
+  height: 75%;
+  background-color: red;
 }
 h1,
 h2 {

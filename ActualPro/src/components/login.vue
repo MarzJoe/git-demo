@@ -75,7 +75,7 @@ html {
 }
 .hello {
   width: 100%;
-  height: 722px;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;

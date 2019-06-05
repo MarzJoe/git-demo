@@ -180,8 +180,8 @@ export default {
       this.$http
         .post(
           // "https://www.myyd.xyz/baas/takeoutAdmin/cuisine/queryTakeout_food"
-          // "http://marsjoe.work/Baas/xiaodian/mypay/queryTakeout_food",
-          "http://localhost:8080/baas/xiaodian/mypay/queryTakeout_food",
+          "http://marsjoe.work/Baas/xiaodian/mypay/queryTakeout_food",
+          // "http://localhost:8080/baas/xiaodian/mypay/queryTakeout_food",
           {
             emulateJSON: true
           }

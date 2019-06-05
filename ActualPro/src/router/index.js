@@ -6,6 +6,8 @@ import Getdata1 from '@/components/Getdata1'
 import index from '@/components/index'
 import InsertData from '@/components/InsertData'
 import login from '@/components/login'
+import productmanger from '@/components/productmanger'
+import test from '@/components/test'
 
 Vue.use(Router)
 
@@ -32,9 +34,9 @@ export default new Router({
           component: HelloWorld
         },
         {
-          path: '/HelloWorld',
-          name: 'HelloWorld',
-          component: HelloWorld
+          path: '/productmanger',
+          name: 'productmanger',
+          component: productmanger
         },
         {
           path: '/Getdata1',

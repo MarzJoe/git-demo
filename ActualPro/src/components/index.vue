@@ -10,7 +10,7 @@
               <MenuItem name="1" to="/productmanger">
                 <Icon type="md-document"/>商品管理
               </MenuItem>
-              <MenuItem name="2" to="/HelloWorld">
+              <MenuItem name="2" to="/ordermanger">
                 <Icon type="md-chatbubbles"/>订单管理
               </MenuItem>
           </Menu>

@@ -8,6 +8,7 @@ import locale from 'iview/dist/locale/en-US'
 import 'iview/dist/styles/iview.css'
 //  import axios from 'axios'
 import VueResource from 'vue-resource'
+import moment from 'moment'
 Vue.use(VueResource)
 Vue.use(iview, { locale })
 Vue.config.productionTip = false
@@ -23,4 +24,8 @@ new Vue({
 Vue.use(iview, {
   transfer: true,
   size: 'large'
+})
+Vue.filter('dateformat', function(dataStr, pattern = 'YYYY-MM-DD HH:mm:ss') {
+  return moment(dataStr).format(pattern)
+
 })

@@ -7,31 +7,30 @@ import index from '@/components/index'
 import InsertData from '@/components/InsertData'
 import login from '@/components/login'
 import productmanger from '@/components/productmanger'
+import ordermanger from '@/components/ordermanger'
 import test from '@/components/test'
 
 Vue.use(Router)
 
 export default new Router({
-  routes: [
-    {
-      path:"/",
-      name:"login",
-      component:login
+  routes: [{
+      path: "/",
+      component: login,
     },
     {
-      path:'/index',
-      name:"Index",
-      component:index,
-      children:[
+      path: '/index',
+      name: "Index",
+      component: index,
+      children: [
         {
-        path: '/Getdata',
-        name: 'Getdata',
-        component: Getdata
+          path: '/Getdata',
+          name: 'Getdata',
+          component: Getdata
         },
         {
-          path: '/HelloWorld',
-          name: 'HelloWorld',
-          component: HelloWorld
+          path: '/ordermanger',
+          name: 'ordermanger',
+          component: ordermanger
         },
         {
           path: '/productmanger',
@@ -44,11 +43,11 @@ export default new Router({
           component: Getdata1
         },
         {
-          path:'/InsertData',
-          name:'InsertData',
-          component:InsertData
+          path: '/InsertData',
+          name: 'InsertData',
+          component: InsertData
         },
-    ]
+      ]
     },
 
   ]

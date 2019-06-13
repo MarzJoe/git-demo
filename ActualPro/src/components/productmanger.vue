@@ -86,11 +86,13 @@
       </div>
       <div class="middle-mydata">
         <i-table
+        :row-class-name="rowClassName"
           border
           :height="talbleH"
           :columns="columns"
           :data="products"
           @on-sort-change="changeSort()"
+          class="table"
         >
           <template slot-scope="{ row, index }" slot="action">
   
@@ -182,26 +184,26 @@ export default {
           title: '名称',
           align: 'left',
           slot: 'fName',
-          width: '100'
+          // width: '100'
         },
         {
           title: '描述',
           align: 'left',
           slot: 'fDescription',
-          width: '400'
+          // width: '400'
         },
 
         {
           title: '图片',
           slot: 'imgsrc',
           align: 'center',
-          width: '200'
+          // width: '200'
         },
         {
           title: '库存',
           align: 'left',
           slot: 'fSellNum',
-          width: '80',
+          // width: '80',
           sortable: true,
           key: 'fSellNum',
           sortMethod: function(a, b, type) {
@@ -215,7 +217,7 @@ export default {
           slot: 'fPrice',
           align: 'left',
           sortable: true,
-          width: '100',
+          // width: '100',
           key: 'fPrice',
           sortMethod: function(a, b, type) {
             this.sortKey = this.key
@@ -228,7 +230,7 @@ export default {
           title: '类别',
           align: 'left',
           slot: 'fClassName',
-          width: '100',
+          // width: '100',
           key: 'fClass'
   
         },
@@ -352,7 +354,7 @@ export default {
       modal2: false,
       showList: [],
       dataCount: 1,
-      pageSize: 9,
+      pageSize: 10,
       model3: '',
       columns8: [
         {
@@ -517,6 +519,14 @@ export default {
     }
   },
   methods: {
+         rowClassName1 (row, index) {
+                if (index === 1) {
+                    return 'demo-table-info-row';
+                } else if (index === 3) {
+                    return 'demo-table-error-row';
+                }
+                return '';
+            },
     changeSort() {
       console.log('tag', 'changeSort')
       this.$store.state.key = '123'
@@ -1130,6 +1140,11 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+/* .ivu-table .demo-table-info-row td{
+        background-color: black;
+        color: #fff;
+        height: 200px;
+    } */
 .shop {
   width: 100%;
   height: 100%;

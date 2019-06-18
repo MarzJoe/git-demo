@@ -6,7 +6,7 @@
     <div class="container-mid">
       <div class="shop">
         <div class="left">
-          <Menu :theme="theme3" active-name="1" style="width:100%">
+          <Menu :theme="theme3" active-name="1" style="width:100%;height:100%;">
               <MenuItem name="1" to="/productmanger">
                 <Icon type="md-document"/>商品管理
               </MenuItem>

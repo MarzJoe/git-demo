@@ -1,20 +1,16 @@
 <template>
   <div class="shop">
     <Modal title="订单详情" width="800px" v-model="ShowState" :mask-closable="false">
-      <!-- <ol>
-        商品名称：
-      </ol>-->
-
       <div class="oderDetail">
-        <div
-          style="width:45%;display:flex;flex-direction:row;justify-content:center;"
-        >用户：{{fUserName}}</div>
         <div class="oderDetail-top">
           <div style="width:45%">订单编号：{{fOrderID}}</div>
-          <div style="width:45%;margin-left:10%">成交时间：{{fOrderTime | dateformat('YYYY-MM-DD HH:mm:ss')}}</div>
+          <div
+            style="width:45%;margin-left:10%"
+          >成交时间：{{fOrderTime | dateformat('YYYY-MM-DD HH:mm:ss')}}</div>
         </div>
-        <div class="oderDetail-mid">
-          <ol style="width:100%;margin:0;padding:0;">
+        <div class="oderDetail-mid" v-if="ShowState">
+          <Table :columns="columns1" :data="orderDetails" style="width:100%;"></Table>
+          <!-- <ol style="width:100%;margin:0;padding:0;">
             <li class="itemDetail" style="font-weight:bold;margin-bottom:10px;">
               <div style="width:30%">商品名称</div>
               <div style="width:30%">商品数量</div>
@@ -25,52 +21,15 @@
               <div style="width:30%;margin-left:2%;">{{ item.fFoodCountOrder}}</div>
               <div style="width:30%">¥{{item.fFoodPrice}}</div>
             </li>
-          </ol>
+          </ol>-->
           <div class="price">总价：¥{{fOrderPrice}}</div>
         </div>
         <div class="oderDetail-bot">
+          <div style="width:45%;">收货人：{{fUserName}}</div>
           <div style="width:45%">送货地址：{{fUserGetAddress}}</div>
           <div style="width:45%">电话号码：{{fUserGetTel}}</div>
         </div>
       </div>
-
-      <!-- <Form
-        ref="addForm"
-        :model="formLeft"
-        :rules="ruleClass"
-        label-position="left"
-        :label-width="100"
-      >
-        <Form-item prop="fOrderID" label="名称">
-          <Input v-model="formLeft.fOrderID" placeholder="请录入商品名称"></Input>
-        </Form-item>
-        <Form-item prop="fUserGetAddress" label="价格">
-          <Input v-model="formLeft.fUserGetAddress" placeholder="请录入商品价格"></Input>
-        </Form-item>
-        <Form-item prop="fUserName" label="库存">
-          <Input v-model="formLeft.fUserName" placeholder="请录入商品库存数量"></Input>
-        </Form-item>
-        <Form-item prop="fUserGetName" label="简介">
-          <Input v-model="formLeft.fUserGetName" placeholder="请录入商品简介"></Input>
-        </Form-item>
-        <Form-item prop="fClass" label="类别">
-          <Input v-model="formLeft.fClass" style="display:none;"></Input>
-          <Select v-model="formLeft.fClass">
-            <Option :value="item.value" v-for="item in addclasses" :key="item.value">{{item.label}}</Option>
-          </Select>
-        </Form-item>
-        <Form-item prop="ownerID" label="主图">
-          <Input v-model="formLeft.ownerID" style="display:none;"></Input>
-          <uposs @myImgFunc="getAddImgParams" v-model="editAddfOrderTime" ref="zhutu"></uposs>
-        </Form-item>
-      </Form>
-      <div slot="footer">
-        <Button
-          type="primary"
-          @click="handleSubmit()"
-          v-bind:disabled="formLeft.fOrderID==''||formLeft.fUserGetAddress==''||formLeft.fUserName==''||formLeft.fUserGetName==''||formLeft.fClass==''||formLeft.ownerID==''||editAddfOrderTime==''"
-        >提交</Button>
-      </div>-->
     </Modal>
 
     <div class="right">
@@ -109,6 +68,7 @@
       </div>
       <div class="middle-mydata">
         <i-table
+          :style
           :row-class-name="rowClassName"
           border
           :height="talbleH"
@@ -206,6 +166,20 @@ import uposs from "@/components/uposs";
 export default {
   data() {
     return {
+      columns1: [
+        {
+          title: "商品名称",
+          key: "fFoodName"
+        },
+        {
+          title: "商品数量",
+          key: "fFoodCountOrder"
+        },
+        {
+          title: "商品单价",
+          key: "fFoodPrice"
+        }
+      ],
       fOrderID: "",
       fUserName: "",
       fOrderTime: "",
@@ -241,25 +215,26 @@ export default {
           title: "订单编号",
           align: "left",
           slot: "fOrderID",
-          className: 'demo-table-info-column'
+          width: 200,
+          className: "demo-table-info-column"
         },
         {
           title: "发货单号",
           align: "left",
           slot: "fOrderKuaiDi",
-          // width: "100"
+          width: "100"
         },
         {
           title: "客户姓名",
           slot: "fUserName",
           align: "center",
-          // width: "90"
+          width: "90"
         },
         {
           title: "下单时间",
           align: "center",
           slot: "fOrderTime",
-          // width: "105",
+          width: "105",
           sortable: true,
           key: "fOrderTime"
           // sortMethod: function(a, b, type) {
@@ -273,7 +248,7 @@ export default {
           slot: "fOrderPrice",
           align: "center",
           sortable: true,
-          // width: "80",
+          width: "80",
           key: "fOrderPrice"
           // sortMethod: function(a, b, type) {
           //   this.sortKey = this.key
@@ -284,18 +259,18 @@ export default {
           title: "收货人电话",
           slot: "fUserGetTel",
           align: "center",
-          // width: "140"
+          width: "140"
         },
         {
           title: "收获姓名",
           slot: "fUserGetName",
           align: "center",
-          // width: "90"
+          width: "90"
         },
         {
           title: "收货人地址",
           slot: "fUserGetAddress",
-          align: "center",
+          align: "center"
           // width: "300"
         },
 
@@ -303,7 +278,7 @@ export default {
           title: "操作",
           align: "center",
           slot: "action",
-          // width: 200
+          width: 200
         }
       ],
       // 表格数据集（不带value）
@@ -370,7 +345,11 @@ export default {
     uposs
   },
 
-  computed: {},
+  computed: {
+    unnes() {
+      return this.talbleH % 58;
+    }
+  },
   mounted() {
     if (JSON.parse(localStorage.getItem("weiyiOrderes") || "[]").length == 0) {
       console.log("订单数据来源：", "取服务器数据");
@@ -391,14 +370,9 @@ export default {
   watch: {},
   methods: {
     // 表外部排序
-     rowClassName (row, index) {
-                if (index === 1) {
-                    return 'demo-table-info-row';
-                } else if (index === 3) {
-                    return 'demo-table-error-row';
-                }
-                return '';
-            },
+    rowClassName(row, index) {
+      return "demo-table-info-row";
+    },
     changeSort() {
       if (this.sort === "DESC") {
         this.sort = "ASC";
@@ -811,8 +785,9 @@ export default {
       this.orders = this.preShowData.slice(_start, _end);
     }
   },
+
   created() {
-      //  this.tableHeight = window.innerHeight - this.$refs.table.$el.offsetTop - 80
+    //  this.tableHeight = window.innerHeight - this.$refs.table.$el.offsetTop - 80
     this.talbleH = window.innerHeight * 0.865 * 0.84;
     // this.talbleW = window.innerWidth * 0.9;
     // 初始化数据   originOrderes     classes     addclassess
@@ -821,25 +796,15 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
- .ivu-table td.demo-table-info-column{
-        background-color: #2db7f5;
-        color: #fff;
-        
-    }
-.ivu-table .demo-table-info-row td{
-        background-color: red;
-        color: #fff;
-        height: 20%;
-    }
-    /* .ivu-table .demo-table-error-row td{
+<style scoped>
+/* .ivu-table .demo-table-error-row td{
         background-color: #ff6600;
         color: #fff;
         width: 100%;
     } */
-.table{
+.table {
   width: 100%;
-  height:100%;
+  height: 100%;
 }
 .price {
   width: 100%;
@@ -852,14 +817,15 @@ export default {
   width: 100%;
   height: 80%;
   /* background-color: red; */
-  font-size: 12pt;
+  font-size: 11pt;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 .oderDetail-top {
-  width: 80%;
+  width: 95%;
+  font-weight: bold;
   height: 50px;
   /* background-color: gold; */
   display: flex;
@@ -867,7 +833,8 @@ export default {
   align-items: center;
 }
 .oderDetail-mid {
-  width: 80%;
+  width: 95%;
+    font-weight: bold;
   /* background-color: blue; */
   display: flex;
   flex-direction: column;
@@ -875,7 +842,8 @@ export default {
   align-items: center;
 }
 .oderDetail-bot {
-  width: 80%;
+    font-weight: bold;
+  width: 95%;
   height: 50px;
   /* background-color: gold; */
   display: flex;

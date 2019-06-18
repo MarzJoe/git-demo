@@ -22,6 +22,18 @@ export default {
 </script>
 
 <style>
+.ivu-table td.demo-table-info-column {
+  background-color: #2db7f5;
+  color: #fff;
+}
+.ivu-table-header th{
+    height: 54px;
+  }
+.ivu-table .demo-table-info-row td {
+  /* background-color: red; */
+  /* color: #fff; */
+  height: 59px;
+}
 body{
   margin: 0;
   padding: 0;

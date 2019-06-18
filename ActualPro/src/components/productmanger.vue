@@ -10,6 +10,7 @@
       >
         <Form-item prop="fName" label="名称">
           <Input v-model="formLeft.fName" placeholder="请录入商品名称"></Input>
+          <div>{{this.formLeft.fName}}</div>
         </Form-item>
         <Form-item prop="fPrice" label="价格">
           <Input v-model="formLeft.fPrice" placeholder="请录入商品价格"></Input>
@@ -85,26 +86,22 @@
         </div>
       </div>
       <div class="middle-mydata">
-        <i-table
-        :row-class-name="rowClassName"
+        <i-table ref='mytable'
+          :row-class-name="rowClassName"
           border
           :height="talbleH"
           :columns="columns"
           :data="products"
           @on-sort-change="changeSort()"
-          class="table"
         >
           <template slot-scope="{ row, index }" slot="action">
-  
             <div v-if="editIndex === index">
-              
               <Button @click="handleSave(index)">保存</Button>
               <Button @click="handleDelete(index)">删除</Button>
               <Button @click="editIndex = -1">取消</Button>
             </div>
             <div v-else>
               <Button @click="handleEdit(row, index)">操作</Button>
-           
             </div>
           </template>
           <template slot-scope="{ row, index }" slot="fName">
@@ -124,7 +121,7 @@
             <span v-else>{{ row.fPrice }}</span>
           </template>
           <template slot-scope="{ row, index }" slot="fClassName">
-                  <Select v-model="editfClassName" v-if="editIndex === index">
+            <Select v-model="editfClassName" v-if="editIndex === index">
               <Option :value="item.value" v-for="item in classes" :key="item.value">{{item.label}}</Option>
             </Select>
             <template v-else>
@@ -162,135 +159,140 @@
 </template>
 
 <script>
-import { setCookie, getCookie } from '../assets/js/cookie.js'
-import api from '../assets/js/api.js'
+import { setCookie, getCookie } from "../assets/js/cookie.js";
+import api from "../assets/js/api.js";
 
-import uposs from '@/components/uposs'
+import uposs from "@/components/uposs";
 export default {
   data() {
     return {
+      //       height:{
+
+      // 　　　　　　width:'200px',
+      // 　　　　　　height:'',
+      // 　　　　　　backguoundc:red,
+
+      // 　　　　},
       // search参数变量
-      pName: '',
-      pClass: '000',
+      pName: "",
+      pClass: "000",
       classes: [],
-      pPriceMin: '0',
-      pPriceMax: '999',
+      pPriceMin: "0",
+      pPriceMax: "999",
 
       // 表格数据部分
-      talbleH: '',
+      talbleH: "",
       // 列定义
       columns: [
         {
-          title: '名称',
-          align: 'left',
-          slot: 'fName',
+          title: "名称",
+          align: "left",
+          slot: "fName",
+          height: "200"
           // width: '100'
         },
         {
-          title: '描述',
-          align: 'left',
-          slot: 'fDescription',
+          title: "描述",
+          align: "left",
+          slot: "fDescription"
           // width: '400'
         },
 
         {
-          title: '图片',
-          slot: 'imgsrc',
-          align: 'center',
+          title: "图片",
+          slot: "imgsrc",
+          align: "center"
           // width: '200'
         },
         {
-          title: '库存',
-          align: 'left',
-          slot: 'fSellNum',
+          title: "库存",
+          align: "left",
+          slot: "fSellNum",
           // width: '80',
           sortable: true,
-          key: 'fSellNum',
+          key: "fSellNum",
           sortMethod: function(a, b, type) {
-            this.sortKey = this.key
-            setCookie('key', this.key)
-            console.log('sortMethod====', getCookie('key'))
+            this.sortKey = this.key;
+            setCookie("key", this.key);
+            console.log("sortMethod====", getCookie("key"));
           }
         },
         {
-          title: '价格',
-          slot: 'fPrice',
-          align: 'left',
+          title: "价格",
+          slot: "fPrice",
+          align: "left",
           sortable: true,
           // width: '100',
-          key: 'fPrice',
+          key: "fPrice",
           sortMethod: function(a, b, type) {
-            this.sortKey = this.key
-            setCookie('key', this.key)
+            this.sortKey = this.key;
+            setCookie("key", this.key);
           }
-
-
         },
         {
-          title: '类别',
-          align: 'left',
-          slot: 'fClassName',
+          title: "类别",
+          align: "left",
+          slot: "fClassName",
           // width: '100',
-          key: 'fClass'
-  
+          key: "fClass"
         },
         {
-          title: '操作',
-          slot: 'action'
+          title: "操作",
+          slot: "action"
         }
       ],
 
       // 当前页面编号
       // currentIndex:1,
-      sortKey: 'fPrice',
+      sortKey: "fPrice",
       fNameData: [],
       fDescriptionData: [],
       fPriceData: [],
       fClassData: [],
       flsShowData: [],
       preShowData: [],
-      fColumns: 'fName',
+      fColumns: "fName",
       loading: true,
 
-      pDescription: '',
+      pDescription: "",
 
       pHuojia: 0,
-      PID: '',
+      PID: "",
 
-      name: '',
+      name: "",
       // 对话框显示----状态数据
       ShowState: false,
       // 状态按钮（增加记录）所在div----高度
-      addH: '',
+      addH: "",
       // 表单数据对象
       formLeft: {
-        fName: '',
-        fDescription: '',
-        fSellNum: '',
-        fPrice: '',
-        fClass: '',
-        storeFileName: '',
-        ownerID: ''
+        fName: "",
+        fDescription: "",
+        fSellNum: "",
+        fPrice: "",
+        fClass: "",
+        storeFileName: "",
+        ownerID: ""
       },
       // 表单数据规则对象
       ruleClass: {
-        fName: [{ required: true, message: '请填写商品名称', trigger: 'blur' }],
+        fName: [{ required: true, message: "请填写商品名称", trigger: "blur" }],
         fDescription: [
-          { required: true, message: '请填写商品简介', trigger: 'blur' }
+          { required: true, message: "请填写商品简介", trigger: "blur" }
         ],
         fSellNum: [
-          { required: true, message: '请填写商品库存', trigger: 'blur' }
+          { required: true, message: "请填写商品库存", trigger: "blur" }
         ],
         fPrice: [
-          { required: true, message: '请填写商品价格', trigger: 'blur' }
+          { required: true, message: "请填写商品价格", trigger: "blur" }
         ],
         fClass: [
-          { required: true, message: '请填写商品类别名称', trigger: 'blur' }
+          { required: true, message: "请填写商品类别名称", trigger: "blur" }
         ]
       },
 
-      currentId: '',
-      currentScore: '',
+      currentId: "",
+      currentScore: "",
       isSpinShow: false,
       // 模拟数据（不带value）
       products: [],
@@ -301,7 +303,7 @@ export default {
             value: 0
           },
           fName: {
-            value: '全部'
+            value: "全部"
           }
         },
         {
@@ -309,7 +311,7 @@ export default {
             value: 1
           },
           fName: {
-            value: '上架'
+            value: "上架"
           }
         },
         {
@@ -317,103 +319,103 @@ export default {
             value: 2
           },
           fName: {
-            value: '下架'
+            value: "下架"
           }
         }
       ],
       self: this,
 
       editIndex: -1, // 当前聚焦的输入框的行数
-      editfName: '', // 第一列输入框，当然聚焦的输入框的输入内容，与 data 分离避免重构的闪烁
-      editimgsrc: '', // 第二列输入框
-      editfPrice: '', // 第三列输入框
-      editAddimgsrc: '',
-      editfDescription: '',
-      editfSellNum: '',
-      editAddress: '',
-      ownerID: '',
-      storeFileName: '',
-      tempImg: '',
+      editfName: "", // 第一列输入框，当然聚焦的输入框的输入内容，与 data 分离避免重构的闪烁
+      editimgsrc: "", // 第二列输入框
+      editfPrice: "", // 第三列输入框
+      editAddimgsrc: "",
+      editfDescription: "",
+      editfSellNum: "",
+      editAddress: "",
+      ownerID: "",
+      storeFileName: "",
+      tempImg: "",
       formLeft: {
-        fName: '',
-        fPrice: '',
-        fDescription: '',
-        fClass: '',
-        fSumNum: '',
-        fOldPrice: ''
+        fName: "",
+        fPrice: "",
+        fDescription: "",
+        fClass: "",
+        fSumNum: "",
+        fOldPrice: ""
       },
       formLeftChange: {
-        fName: '',
-        fPrice: '',
-        fDescription: '',
-        fClass: '',
-        fSumNum: '',
-        fOldPrice: ''
+        fName: "",
+        fPrice: "",
+        fDescription: "",
+        fClass: "",
+        fSumNum: "",
+        fOldPrice: ""
       },
       modal1: false,
       modal2: false,
       showList: [],
       dataCount: 1,
-      pageSize: 10,
-      model3: '',
+
+      model3: "",
       columns8: [
         {
-          title: 'Id',
-          type: 'index',
+          title: "Id",
+          type: "index",
           sortable: true
         },
         {
-          title: '名称',
-          key: 'fName'
+          title: "名称",
+          key: "fName"
         },
         {
-          title: '图片',
-          key: 'imgsrc',
+          title: "图片",
+          key: "imgsrc",
           render: (h, params) => {
-            return h('div', [
-              h('img', {
+            return h("div", [
+              h("img", {
                 attrs: {
                   src: params.row.imgsrc
                 },
                 style: {
-                  width: '40px',
-                  height: '40px'
+                  width: "40px",
+                  height: "40px"
                 }
               })
-            ])
+            ]);
           }
         },
         {
-          title: '描述',
-          key: 'fDescription'
+          title: "描述",
+          key: "fDescription"
         },
         {
-          title: '库存',
-          key: 'fSumNum',
+          title: "库存",
+          key: "fSumNum",
           filters: [
             {
-              label: '大于20',
+              label: "大于20",
               value: 1
             },
             {
-              label: '大于20',
+              label: "大于20",
               value: 1
             }
           ],
           filterMultiple: false,
           filterMethod(value, row) {
             if (value === 1) {
-              return row.fSumNum > 20
+              return row.fSumNum > 20;
             } else if (value === 2) {
-              return row.fSumNum < 20
+              return row.fSumNum < 20;
             }
           }
         },
         {
-          title: 'Action',
-          slot: 'action',
+          title: "Action",
+          slot: "action",
           width: 150,
-          align: 'center'
+          align: "center"
         }
       ],
 
@@ -421,46 +423,46 @@ export default {
       options2: {
         shortcuts: [
           {
-            text: '1 week',
+            text: "1 week",
             value() {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-              return [start, end]
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              return [start, end];
             }
           },
           {
-            text: '1 month',
+            text: "1 month",
             value() {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-              return [start, end]
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              return [start, end];
             }
           },
           {
-            text: '3 months',
+            text: "3 months",
             value() {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-              return [start, end]
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              return [start, end];
             }
           }
         ]
       },
       cityListPrice: [
-        { value: '100-200', label: '100-200' },
-        { value: '200-300', label: '200-300' }
+        { value: "100-200", label: "100-200" },
+        { value: "200-300", label: "200-300" }
       ],
       cityList: [
         {
-          value: '未上架',
-          label: '未上架'
+          value: "未上架",
+          label: "未上架"
         },
         {
-          value: '已上架',
-          label: '已上架'
+          value: "已上架",
+          label: "已上架"
         }
       ],
       ajaxHistoryData: [],
@@ -468,40 +470,54 @@ export default {
       self: this,
       columns5: [
         {
-          title: 'Id',
-          type: 'index',
+          title: "Id",
+          type: "index",
           sortable: true
         },
         {
-          title: '名称',
-          key: 'fName'
+          title: "名称",
+          key: "fName"
         },
         {
-          title: '电话',
-          key: 'fTel'
+          title: "电话",
+          key: "fTel"
         },
         {
-          title: '地址',
-          key: 'fAddress'
+          title: "地址",
+          key: "fAddress"
         }
       ]
-    }
+    };
   },
   components: {
     uposs
   },
-  name: 'test',
+  name: "test",
 
   computed: {
+    dd() {
+      return (
+        "height:" + (this.talbleH % 78) + "px;width:100px;border:1px solid red;"
+      );
+    },
+    pageSize() {
+      return parseInt((this.talbleH - 10) / 59);
+    },
     wt() {
-      return window.innerWidth * 0.9 - 20
+      return window.innerWidth * 0.9 - 20;
     }
+
     // fClassData(){
     //           return sortByKey(this.fClassData,'fPrice')
+
     //       }
   },
   mounted() {
-    this.queryDesc(getCookie('key'))
+    this.queryDesc(getCookie("key"));
+    console.log('===', this.$refs.mytable)
+      // this.$refs.mytable.headerHeight.proxySetter("10")
+    console.log(this.$refs.mytable.headerHeight)
+
   },
   watch: {
     pName(curVal, oldVal) {
@@ -512,58 +528,58 @@ export default {
     },
     pID(curVal, oldVal) {
       {
-        this.pID = curVal
+        this.pID = curVal;
 
-        this.query()
+        this.query();
       }
     }
   },
   methods: {
-         rowClassName1 (row, index) {
-                if (index === 1) {
-                    return 'demo-table-info-row';
-                } else if (index === 3) {
-                    return 'demo-table-error-row';
-                }
-                return '';
-            },
+    rowClassName1(row, index) {
+      if (index === 1) {
+        return "demo-table-info-row";
+      } else if (index === 3) {
+        return "demo-table-error-row";
+      }
+      return "";
+    },
     changeSort() {
-      console.log('tag', 'changeSort')
-      this.$store.state.key = '123'
+      console.log("tag", "changeSort");
+      this.$store.state.key = "123";
 
-      if (this.sort === 'DESC') {
-        this.sort = 'ASC'
+      if (this.sort === "DESC") {
+        this.sort = "ASC";
 
-        this.queryDesc(getCookie('key'))
+        this.queryDesc(getCookie("key"));
       } else {
-        this.sort = 'DESC'
+        this.sort = "DESC";
 
-        this.queryAsc(getCookie('key'))
+        this.queryAsc(getCookie("key"));
       }
       // this.startQuery();
     },
     sortByKey(array, key, sortType) {
       return array.sort(function(a, b) {
-        var x = parseFloat(a[key])
+        var x = parseFloat(a[key]);
 
-        var y = parseFloat(b[key])
-        if (sortType == 'desc') return x > y ? -1 : x < y ? 1 : 0
-        else return x < y ? -1 : x > y ? 1 : 0
-      })
+        var y = parseFloat(b[key]);
+        if (sortType == "desc") return x > y ? -1 : x < y ? 1 : 0;
+        else return x < y ? -1 : x > y ? 1 : 0;
+      });
     },
     getAddImgParams(data) {
-      console.log('ADD===', data)
-      if (data.ownerID != '') {
-        this.formLeft.ownerID = data.ownerID
-        this.formLeft.storeFileName = data.storeFileName
+      console.log("ADD===", data);
+      if (data.ownerID != "") {
+        this.formLeft.ownerID = data.ownerID;
+        this.formLeft.storeFileName = data.storeFileName;
         // 拼接图片地址 （输入框得到的地址  editimgsrc  ）
         this.editAddimgsrc =
-          'https://wxwaimai.oss-cn-huhehaote.aliyuncs.com/kyq/' +
+          "https://wxwaimai.oss-cn-huhehaote.aliyuncs.com/kyq/" +
           data.ownerID +
-          '/' +
-          data.storeFileName
-        console.log('tag', data.imgURL)
-        this.tempImg = data.imgURL[0].src
+          "/" +
+          data.storeFileName;
+        console.log("tag", data.imgURL);
+        this.tempImg = data.imgURL[0].src;
       }
     },
 
@@ -574,7 +590,7 @@ export default {
           // 调用API更新数据库
           this.$http
             .post(
-              'https://www.myyd.xyz/baas/takeoutAdmin/api/INSERT_Takeout_food',
+              "https://www.myyd.xyz/baas/takeoutAdmin/api/INSERT_Takeout_food",
               // 'http://localhost:8080/baas/takeoutAdmin/api/INSERT_Takeout_food',
               JSON.stringify({
                 fName: this.formLeft.fName,
@@ -589,12 +605,12 @@ export default {
               { emulateJSON: true }
             )
             .then(function(res) {
-              this.$Message.success('提交成功!')
+              this.$Message.success("提交成功!");
 
               //   编辑框清空
               // this.formLeft.fName = ''
               // 重新请求数据
-              this.getdata()
+              this.getdata();
               //  setTimeout(() => {
               //       this.loading = false;
               //       this.$nextTick(() => {
@@ -602,99 +618,99 @@ export default {
               //       });
               //   }, 1000);
 
-              this.ShowState = false
+              this.ShowState = false;
             })
             .catch(function() {
-              console.log('服务器异常')
-            })
+              console.log("服务器异常");
+            });
         } else {
-          this.$Message.error('表单验证失败!')
+          this.$Message.error("表单验证失败!");
         }
-      })
+      });
     },
     // 增加记录按钮------切换对话框显示---状态数据
     addProduct() {
-      this.ShowState = true
+      this.ShowState = true;
     },
 
     getImgParams(data) {
-      console.log('dd', data)
-      if (data.ownerID != '') {
-        this.ownerID = data.ownerID
-        this.storeFileName = data.storeFileName
+      console.log("dd", data);
+      if (data.ownerID != "") {
+        this.ownerID = data.ownerID;
+        this.storeFileName = data.storeFileName;
         // 拼接图片地址 （输入框得到的地址  editimgsrc  ）
         this.editimgsrc =
-          'https://wxwaimai.oss-cn-huhehaote.aliyuncs.com/kyq/' +
+          "https://wxwaimai.oss-cn-huhehaote.aliyuncs.com/kyq/" +
           data.ownerID +
-          '/' +
-          data.storeFileName
+          "/" +
+          data.storeFileName;
       }
     },
     queryAsc(key) {
-      let that = this
-      that.products = null
+      let that = this;
+      that.products = null;
 
-      this.queryfName()
+      this.queryfName();
       // this.queryfDescription()
-      this.queryfPrice()
-      this.queryfClass()
+      this.queryfPrice();
+      this.queryfClass();
 
-      that.preShowData = that.fClassData
+      that.preShowData = that.fClassData;
       // 下面不用修改，以preShowData为准
-      that.dataCount = that.preShowData.length
+      that.dataCount = that.preShowData.length;
 
-      that.preShowData = this.sortByKey(this.preShowData, key, 'asc')
+      that.preShowData = this.sortByKey(this.preShowData, key, "asc");
 
       // //总条数
       if (that.dataCount < that.pageSize) {
-        that.products = that.preShowData
+        that.products = that.preShowData;
       } else {
-        that.products = that.preShowData.slice(0, that.pageSize)
-        this.$refs['pages'].currentPage = 1
+        that.products = that.preShowData.slice(0, that.pageSize);
+        this.$refs["pages"].currentPage = 1;
       }
     },
     queryDesc(key) {
-      let that = this
-      that.products = null
+      let that = this;
+      that.products = null;
 
-      this.queryfName()
+      this.queryfName();
       // this.queryfDescription()
-      this.queryfPrice()
-      this.queryfClass()
+      this.queryfPrice();
+      this.queryfClass();
 
-      that.preShowData = that.fClassData
+      that.preShowData = that.fClassData;
       // 下面不用修改，以preShowData为准
-      that.dataCount = that.preShowData.length
+      that.dataCount = that.preShowData.length;
 
-      that.preShowData = this.sortByKey(this.preShowData, key, 'desc')
+      that.preShowData = this.sortByKey(this.preShowData, key, "desc");
 
       // //总条数
       if (that.dataCount < that.pageSize) {
-        that.products = that.preShowData
+        that.products = that.preShowData;
       } else {
-        that.products = that.preShowData.slice(0, that.pageSize)
+        that.products = that.preShowData.slice(0, that.pageSize);
 
         //  this.changepage(1)
         //   that.currentIndex=1
-        this.$refs['pages'].currentPage = 1
+        this.$refs["pages"].currentPage = 1;
       }
     },
 
     queryfName() {
-      let that = this
+      let that = this;
 
-      if (that.pName != '') {
-        var items2 = new Array()
+      if (that.pName != "") {
+        var items2 = new Array();
 
         for (let i = 0; i < that.ajaxHistoryData.length; i++) {
           if (that.ajaxHistoryData[i].fName.indexOf(that.pName) >= 0) {
-            items2.push(that.ajaxHistoryData[i])
+            items2.push(that.ajaxHistoryData[i]);
           }
         }
 
-        that.fNameData = items2
+        that.fNameData = items2;
       } else {
-        that.fNameData = that.ajaxHistoryData
+        that.fNameData = that.ajaxHistoryData;
       }
     },
     // queryfDescription() {
@@ -715,9 +731,9 @@ export default {
     //   }
     // },
     queryfPrice() {
-      let that = this
-      if (that.pPriceMin != '' && that.pPriceMax != '') {
-        var items2 = new Array()
+      let that = this;
+      if (that.pPriceMin != "" && that.pPriceMax != "") {
+        var items2 = new Array();
 
         for (let i = 0; i < that.fNameData.length; i++) {
           if (
@@ -725,67 +741,67 @@ export default {
               parseFloat(that.pPriceMin) &&
             parseFloat(that.fNameData[i].fPrice) <= parseFloat(that.pPriceMax)
           ) {
-            items2.push(that.fNameData[i])
+            items2.push(that.fNameData[i]);
           }
         }
-        that.fPriceData = items2
+        that.fPriceData = items2;
       } else {
-        that.fPriceData = that.fNameData
+        that.fPriceData = that.fNameData;
       }
     },
     queryfClass() {
-      let that = this
+      let that = this;
 
-      if (that.pClass != '000') {
-        var items2 = new Array()
+      if (that.pClass != "000") {
+        var items2 = new Array();
 
         for (let i = 0; i < that.fPriceData.length; i++) {
           if (that.fPriceData[i].fClass === that.pClass) {
-            items2.push(that.fPriceData[i])
+            items2.push(that.fPriceData[i]);
           }
         }
 
-        that.fClassData = items2
+        that.fClassData = items2;
       } else {
-        that.fClassData = that.fPriceData
+        that.fClassData = that.fPriceData;
       }
     },
     queryfHuojia() {
-      let that = this
+      let that = this;
 
       if (that.pHuojia != 0) {
-        var items2 = new Array()
+        var items2 = new Array();
 
         for (let i = 0; i < that.fClassData.length; i++) {
-          console.log('+++++', that.fClassData[i])
+          console.log("+++++", that.fClassData[i]);
           if (that.fClassData[i].flsShow === that.pHuojia) {
-            items2.push(that.fClassData[i])
+            items2.push(that.fClassData[i]);
           }
         }
 
-        that.flsShowData = items2
+        that.flsShowData = items2;
       } else {
-        that.flsShowData = that.fClassData
+        that.flsShowData = that.fClassData;
       }
     },
     handleSave(index) {
       // 编辑框的信息保存到静态数组products
-      this.products[index].fName = this.editfName
-      this.products[index].fPrice = this.editfPrice
-      this.products[index].imgsrc = this.editimgsrc
-      this.products[index].fDescription = this.editfDescription
-      this.products[index].fSellNum = this.editfSellNum
-      this.products[index].fClass = this.editfClassName
+      this.products[index].fName = this.editfName;
+      this.products[index].fPrice = this.editfPrice;
+      this.products[index].imgsrc = this.editimgsrc;
+      this.products[index].fDescription = this.editfDescription;
+      this.products[index].fSellNum = this.editfSellNum;
+      this.products[index].fClass = this.editfClassName;
       // this.products[index].address = this.editAddress
       // 用编辑框里的值修改数据库记录值
       // if (this.ownerID === '') {
       //   this.ownerID = row.ownerID
       //   this.storeFileName = row.storeFileName
       // }
-      if (this.ownerID != '') {
+      if (this.ownerID != "") {
         this.$http
           .post(
-            'https://www.myyd.xyz/baas/takeoutAdmin/api/update_Takeout_food',
+            "https://www.myyd.xyz/baas/takeoutAdmin/api/update_Takeout_food",
             JSON.stringify({
               fID: this.products[index].fID,
               fName: this.editfName,
@@ -803,13 +819,13 @@ export default {
               // document.write(res.state)
             },
             function(res) {
-              console.log(res.state)
+              console.log(res.state);
             }
-          )
+          );
       } else {
         this.$http
           .post(
-            'https://www.myyd.xyz/baas/takeoutAdmin/api/update_noimage_Takeout_food',
+            "https://www.myyd.xyz/baas/takeoutAdmin/api/update_noimage_Takeout_food",
             JSON.stringify({
               fID: this.products[index].fID,
               fName: this.editfName,
@@ -825,18 +841,18 @@ export default {
               // document.write(res.state)
             },
             function(res) {
-              console.log(res.state)
+              console.log(res.state);
             }
-          )
+          );
       }
 
-      this.editIndex = -1
+      this.editIndex = -1;
     },
     // 删除商品
     handleDelete(index) {
       this.$http
         .post(
-          'https://www.myyd.xyz/baas/takeoutAdmin/api/delete_Takeout_food',
+          "https://www.myyd.xyz/baas/takeoutAdmin/api/delete_Takeout_food",
           // 'http://localhost:8080/baas/takeoutAdmin/api/delete_Takeout_class',
           JSON.stringify({
             fID: this.products[index].fID
@@ -845,40 +861,40 @@ export default {
         )
         .then(
           function(res) {
-            if (res.data.state === '1') {
-              this.getdata()
-              this.$Message.success('记录删除成功!')
+            if (res.data.state === "1") {
+              this.getdata();
+              this.$Message.success("记录删除成功!");
             } else {
-              this.$Message.success('本目录下还有商品在售，暂不能删除!')
+              this.$Message.success("本目录下还有商品在售，暂不能删除!");
             }
           },
           function(res) {
-            console.log(res.state)
+            console.log(res.state);
           }
-        )
-      this.editIndex = -1
+        );
+      this.editIndex = -1;
     },
     // 操作---按钮
     handleEdit(row, index) {
       // 模拟数据==》编辑数据
-      this.editfName = row.fName
-      this.editfPrice = row.fPrice
-      this.editimgsrc = row.imgsrc
-      this.editfDescription = row.fDescription
-      this.editfSellNum = row.fSellNum
-      this.editfClassName = row.fClass
+      this.editfName = row.fName;
+      this.editfPrice = row.fPrice;
+      this.editimgsrc = row.imgsrc;
+      this.editfDescription = row.fDescription;
+      this.editfSellNum = row.fSellNum;
+      this.editfClassName = row.fClass;
       // this.editBirthday = row.birthday
       // 记录当前行号
       //  this.classes=this.columns[5].filters
 
-      this.editIndex = index
+      this.editIndex = index;
     },
     get: function() {
       if (this.isSpinShow === false) {
-        this.isSpinShow = true
+        this.isSpinShow = true;
         this.$http
           .post(
-            'https://www.myyd.xyz/baas/takeoutAdmin/cuisine/queryTakeout_food',
+            "https://www.myyd.xyz/baas/takeoutAdmin/cuisine/queryTakeout_food",
             // 'http://localhost:8080/baas/takeoutAdmin/cuisine/queryTakeout_food',
             JSON.stringify({
               // filter: 'fPID like ' + this.name
@@ -888,37 +904,37 @@ export default {
             }
           )
           .then(function(res) {
-            var items = new Array()
+            var items = new Array();
             for (let i = 0; i < res.data.rows.length; i++) {
-              var object = new Object()
-              object.fID = res.data.rows[i].fID.value
-              object.fName = res.data.rows[i].fName.value
-              object.fPrice = res.data.rows[i].fPrice.value
-              object.fDescription = res.data.rows[i].fDescription.value
-              object.fSellNum = res.data.rows[i].fSellNum.value
-              object.fClass = res.data.rows[i].fClass.value
+              var object = new Object();
+              object.fID = res.data.rows[i].fID.value;
+              object.fName = res.data.rows[i].fName.value;
+              object.fPrice = res.data.rows[i].fPrice.value;
+              object.fDescription = res.data.rows[i].fDescription.value;
+              object.fSellNum = res.data.rows[i].fSellNum.value;
+              object.fClass = res.data.rows[i].fClass.value;
               object.imgsrc =
-                'https://wxwaimai.oss-cn-huhehaote.aliyuncs.com/kyq/' +
+                "https://wxwaimai.oss-cn-huhehaote.aliyuncs.com/kyq/" +
                 res.data.rows[i].ownerID.value +
-                '/' +
-                res.data.rows[i].storeFileName.value
-              object.ownerID = res.data.rows[i].ownerID.value
-              object.storeFileName = res.data.rows[i].storeFileName.value
-              items[i] = object
+                "/" +
+                res.data.rows[i].storeFileName.value;
+              object.ownerID = res.data.rows[i].ownerID.value;
+              object.storeFileName = res.data.rows[i].storeFileName.value;
+              items[i] = object;
             }
-            this.products = items
-            this.isSpinShow = false
+            this.products = items;
+            this.isSpinShow = false;
           })
           .then(function() {
             this.$http
               .post(
-                'https://www.myyd.xyz/baas/takeoutAdmin/api/queryTakeout_foodclass',
+                "https://www.myyd.xyz/baas/takeoutAdmin/api/queryTakeout_foodclass",
                 {
                   emulateJSON: true
                 }
               )
               .then(function(res) {
-                this.classes = res.data.rows
+                this.classes = res.data.rows;
 
                 // var myclassitems = new Array()
                 // for (let i = 0; i < res.data.rows.length; i++) {
@@ -931,25 +947,25 @@ export default {
                 // this.columns[5].filters = myclassitems
               })
               .catch(function() {
-                alert('error')
-                console.log('服务器异常')
+                alert("error");
+                console.log("服务器异常");
                 // this.isSpinShow = false
-              })
+              });
           })
           .catch(function() {
-            alert('error')
-            console.log('服务器异常')
-            this.isSpinShow = false
-          })
+            alert("error");
+            console.log("服务器异常");
+            this.isSpinShow = false;
+          });
       }
     },
     rowClassName(row, index) {
-      return 'demo-table-info-row'
+      return "demo-table-info-row";
     },
     change: function() {
       this.$http
         .get(
-          'https://marsjoe.work/Baas/mypay/api/updateTest',
+          "https://marsjoe.work/Baas/mypay/api/updateTest",
           JSON.stringify({
             fID: this.giftXueKeList[index].fID,
             fName: this.formLeft.fName,
@@ -961,12 +977,12 @@ export default {
           })
         )
         .then(function(response) {
-          console.log(response)
-          this.getdata()
+          console.log(response);
+          this.getdata();
         })
         .catch(function(error) {
-          console.log(error)
-        })
+          console.log(error);
+        });
     },
     InsertData: function() {
       // var qs = require("qs");
@@ -975,7 +991,7 @@ export default {
       //   qs.stringify({ fName: "小店" }, { indices: false })
       // );
       this.$http
-        .get('https://www.myyd.xyz/baas/takeoutAdmin/api/INSERT_Takeout_food', {
+        .get("https://www.myyd.xyz/baas/takeoutAdmin/api/INSERT_Takeout_food", {
           params: {
             fName: this.formLeft.fName,
             fPrice: this.formLeft.fPrice,
@@ -986,31 +1002,31 @@ export default {
           }
         })
         .then(function(response) {
-          console.log(response)
-          this.getdata()
+          console.log(response);
+          this.getdata();
         })
         .catch(function(error) {
-          console.log(error)
-        })
+          console.log(error);
+        });
     },
     ok() {
-      this.InsertData()
-      this.$Message.info('添加成功')
+      this.InsertData();
+      this.$Message.info("添加成功");
     },
     cancel() {
-      this.$Message.info('取消操作')
+      this.$Message.info("取消操作");
     },
     okChange() {
-      this.change()
-      this.$Message.info('添加成功')
+      this.change();
+      this.$Message.info("添加成功");
     },
     cancelChange() {
-      this.$Message.info('取消操作')
+      this.$Message.info("取消操作");
     },
     remove: function(index) {
       this.$http
         .post(
-          'https://marsjoe.work/Baas/mypay/api/deleteTest',
+          "https://marsjoe.work/Baas/mypay/api/deleteTest",
           // 'http://localhost:8080/baas/takeoutAdmin/api/delete_Takeout_class',
           JSON.stringify({
             fID: this.giftXueKeList[index].fID
@@ -1019,18 +1035,18 @@ export default {
         )
         .then(
           function(res) {
-            if (res.data.state === '1') {
-              this.$Message.success('记录删除成功!')
+            if (res.data.state === "1") {
+              this.$Message.success("记录删除成功!");
             } else {
-              this.$Message.success('本目录下还有商品在售，暂不能删除!')
+              this.$Message.success("本目录下还有商品在售，暂不能删除!");
             }
-            this.getdata()
+            this.getdata();
           },
           function(res) {
-            console.log(res.state)
+            console.log(res.state);
           }
-        )
-      this.editIndex = -1
+        );
+      this.editIndex = -1;
       // const fID = this.giftXueKeList[index].fID
 
       //  this.$http
@@ -1048,10 +1064,10 @@ export default {
       //   });
     },
     getdata: function() {
-      var that = this
+      var that = this;
       this.$http
         .post(
-          'https://www.myyd.xyz/baas/takeoutAdmin/cuisine/queryTakeout_food',
+          "https://www.myyd.xyz/baas/takeoutAdmin/cuisine/queryTakeout_food",
           // 'http://marsjoe.work/Baas/xiaodian/mypay/queryTakeout_food',
           // "http://localhost:8080/baas/xiaodian/mypay/queryTakeout_food",
           {
@@ -1059,27 +1075,28 @@ export default {
           }
         )
         .then(function(res) {
-          var items = new Array()
+          console.log(res)
+          var items = new Array();
           for (let i = 0; i < res.data.rows.length; i++) {
-            var object = new Object()
-            object.fID = res.data.rows[i].fID.value
-            object.fName = res.data.rows[i].fName.value
-            object.fPrice = res.data.rows[i].fPrice.value
-            object.fDescription = res.data.rows[i].fDescription.value
-            object.fSellNum = res.data.rows[i].fSellNum.value
-            object.fClass = res.data.rows[i].fClass.value
+            var object = new Object();
+            object.fID = res.data.rows[i].fID.value;
+            object.fName = res.data.rows[i].fName.value;
+            object.fPrice = res.data.rows[i].fPrice.value;
+            object.fDescription = res.data.rows[i].fDescription.value;
+            object.fSellNum = res.data.rows[i].fSellNum.value;
+            object.fClass = res.data.rows[i].fClass.value;
             object.imgsrc =
-              'https://wxwaimai.oss-cn-huhehaote.aliyuncs.com/kyq/' +
+              "https://wxwaimai.oss-cn-huhehaote.aliyuncs.com/kyq/" +
               res.data.rows[i].ownerID.value +
-              '/' +
-              res.data.rows[i].storeFileName.value
-            object.ownerID = res.data.rows[i].ownerID.value
-            object.storeFileName = res.data.rows[i].storeFileName.value
-            items[i] = object
+              "/" +
+              res.data.rows[i].storeFileName.value;
+            object.ownerID = res.data.rows[i].ownerID.value;
+            object.storeFileName = res.data.rows[i].storeFileName.value;
+            items[i] = object;
           }
-          that.ajaxHistoryData = items
+          that.ajaxHistoryData = items;
 
-          that.queryDesc(this.sortKey)
+          that.queryDesc(this.sortKey);
           // console.log('====', that.ajaxHistoryData)
           // that.dataCount = that.ajaxHistoryData.length
           // //总条数
@@ -1097,45 +1114,48 @@ export default {
             })
             .then(function(res) {
               // 无中生有-----增加一个对象（全部）
-              var myclassitems = new Array()
-              var object = new Object()
-              object.value = '000'
-              object.label = '全部'
-              myclassitems[0] = object
+              var myclassitems = new Array();
+              var object = new Object();
+              object.value = "000";
+              object.label = "全部";
+              myclassitems[0] = object;
               for (let i = 0; i < res.data.rows.length; i++) {
-                var object = new Object()
-                object.value = res.data.rows[i].fID.value
-                object.label = res.data.rows[i].fName.value
-                myclassitems[i + 1] = object
+                var object = new Object();
+                object.value = res.data.rows[i].fID.value;
+                object.label = res.data.rows[i].fName.value;
+                myclassitems[i + 1] = object;
               }
-              this.classes = myclassitems
+              this.classes = myclassitems;
             })
             .catch(function() {
-              alert('error')
-              console.log('服务器异常')
-            })
+              alert("error");
+              console.log("服务器异常");
+            });
         })
         .catch(function() {
-          alert('error')
-          console.log('服务器异常')
-        })
+          alert("error");
+          console.log("服务器异常");
+        });
     },
     changepage(index) {
       // this.currentIndex=index
-      var that = this
-      var _start = (index - 1) * that.pageSize
-      var _end = index * this.pageSize
-      this.products = this.preShowData.slice(_start, _end)
+      var that = this;
+      var _start = (index - 1) * that.pageSize;
+      var _end = index * this.pageSize;
+      this.products = this.preShowData.slice(_start, _end);
     }
   },
   created() {
-    this.talbleH = window.innerHeight * 0.865 * 0.84
+      
+  
+    // this.height.height=window.innerHeight-153+'px';
+    this.talbleH = window.innerHeight * 0.865 * 0.84;
     // this.handleListApproveHistory()
     // this.pClass='000'
-    this.getdata()
+    this.getdata();
     // this.queryDesc()
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -1170,10 +1190,18 @@ export default {
   height: 84%;
   background-color: greenyellow;
   display: flex;
+
   flex-direction: row;
   justify-content: center;
   align-items: center;
 }
+#ddd{
+    color:#FFD3B4;
+    font-weight: bold;
+    background-color: #212c31;
+    border: none;
+    height: 62px;
+  }
 .foot-page {
   width: 100%;
   height: 8%;
